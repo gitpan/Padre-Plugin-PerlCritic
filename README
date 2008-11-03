@@ -1,5 +1,5 @@
 NAME
-    Padre::Plugin::PerlCritic - Format perl files using Perl::Critic
+    Padre::Plugin::PerlCritic - Analyze perl files with Perl::Critic
 
 SYNOPIS
     This is a simple plugin to run Perl::Critic on your source code.

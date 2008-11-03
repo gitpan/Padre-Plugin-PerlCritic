@@ -1,4 +1,7 @@
 Revision history for Perl extension Padre::Plugin::PerlCritic.
 
+0.02  Tue Nov 3 2008
+    - We really only need one menu item
+
 0.01  Tue Nov 3 2008
     - original version

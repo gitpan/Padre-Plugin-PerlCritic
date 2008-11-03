@@ -14,8 +14,7 @@ diag "Wx Version: $Wx::VERSION " . Wx::wxVERSION_STRING();
  
 {
     my @menu = Padre::Plugin::PerlCritic->menu;
-    is @menu, 2, 'one menu item';
-    is $menu[0][0], 'Run critic on the active document', 'menu item 1';
-    is $menu[1][0], 'Run critic on the selected text', 'menu item 2';
-    BEGIN { $tests += 3; }
+    is @menu, 1, 'one menu item';
+    is $menu[0][0], 'Run Perl::Critic', 'menu item 1';
+    BEGIN { $tests += 2; }
 }

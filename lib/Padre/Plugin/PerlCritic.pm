@@ -6,11 +6,11 @@ use warnings;
 use Perl::Critic ();
 use Wx qw(wxOK wxCENTRE);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
-Padre::Plugin::PerlCritic - Format perl files using Perl::Critic
+Padre::Plugin::PerlCritic - Analyze perl files with Perl::Critic
 
 =head1 SYNOPIS
 
@@ -21,64 +21,30 @@ on the default .perlcriticrc configuration. See Perl::Critic for details.
     
 =cut
 
-my @menu = (
-    [ 'Run critic on the active document', \&critic_document ],
-    [ 'Run critic on the selected text', \&critic_selection ]
-);
+my @menu = ( [ 'Run Perl::Critic', \&critic ], );
 
 sub menu {
     return @menu;
 }
 
-sub _critic {
-    my ( $self, $src ) = @_;
-
-    return unless defined $src;
+sub critic {
+    my ( $self, $event ) = @_;
 
     my $doc = $self->selected_document;
+    my $src = $self->selected_text;
+    $src = $doc->text_get unless $src;
+    return unless defined $src;
 
     if ( !$doc->isa('Padre::Document::Perl') ) {
         return Wx::MessageBox( 'Document is not a Perl document', "Error", wxOK | wxCENTRE, $self );
     }
 
     my $critic = Perl::Critic->new();
-
     my @violations = $critic->critique( \$src );
 
     $self->show_output;
     $self->{output}->clear;
     $self->{output}->AppendText( join '', @violations ) if @violations;
-
-    return;
-}
-
-sub critic_selection {
-    my ( $self, $event ) = @_;
-    my $src = $self->selected_text;
-
-    my $newtext = _critic( $self, $src );
-
-    return unless defined $newtext && length $newtext;
-
-    $newtext =~ s{\n$}{};
-
-    my $editor = $self->selected_editor;
-    $editor->ReplaceSelection($newtext);
-
-    return;
-}
-
-sub critic_document {
-    my ( $self, $event ) = @_;
-
-    my $doc = $self->selected_document;
-    my $src = $doc->text_get;
-
-    my $newtext = _critic( $self, $src );
-
-    return unless defined $newtext && length $newtext;
-
-    $doc->text_set($newtext);
 
     return;
 }
