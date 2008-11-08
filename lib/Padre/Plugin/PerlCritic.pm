@@ -6,7 +6,7 @@ use warnings;
 use Perl::Critic ();
 use Wx qw(wxOK wxCENTRE);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 NAME
 
@@ -44,7 +44,8 @@ sub critic {
 
     $self->show_output;
     $self->{output}->clear;
-    $self->{output}->AppendText( join '', @violations ) if @violations;
+    my $output = @violations ? join '', @violations : 'Perl::Critic found nothing to say about this code';
+    $self->{output}->AppendText($output);
 
     return;
 }

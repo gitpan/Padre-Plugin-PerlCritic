@@ -1,6 +1,6 @@
 ---
 name: Padre-Plugin-PerlCritic
-version: 0.02
+version: 0.03
 author:
   - 'Kaare Rasmussen <kaare@cpan.org>'
 abstract: Analyze perl files with Perl::Critic
@@ -16,7 +16,7 @@ build_requires:
 provides:
   Padre::Plugin::PerlCritic:
     file: lib/Padre/Plugin/PerlCritic.pm
-    version: 0.02
+    version: 0.03
 generated_by: Module::Build version 0.280801
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

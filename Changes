@@ -1,5 +1,8 @@
 Revision history for Perl extension Padre::Plugin::PerlCritic.
 
+0.03  Sat Nov 8 2008
+    - Say something when we don't have anything to say
+
 0.02  Tue Nov 3 2008
     - We really only need one menu item
 
