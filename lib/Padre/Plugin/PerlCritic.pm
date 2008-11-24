@@ -3,10 +3,10 @@ package Padre::Plugin::PerlCritic;
 use strict;
 use warnings;
 
-use Perl::Critic ();
+use base 'Padre::Plugin';
 use Wx qw(wxOK wxCENTRE);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 NAME
 
@@ -21,14 +21,15 @@ on the default .perlcriticrc configuration. See Perl::Critic for details.
     
 =cut
 
-my @menu = ( [ 'Run Perl::Critic', \&critic ], );
-
-sub menu {
-    return @menu;
+sub menu_plugins_simple {
+	my $self = shift;
+	return 'Perl::Critic' => [
+		Run => \&critic,
+	];
 }
 
 sub critic {
-    my ( $self, $event ) = @_;
+    my ($self) = @_;
 
     my $doc = $self->selected_document;
     my $src = $self->selected_text;
@@ -38,6 +39,8 @@ sub critic {
     if ( !$doc->isa('Padre::Document::Perl') ) {
         return Wx::MessageBox( 'Document is not a Perl document', "Error", wxOK | wxCENTRE, $self );
     }
+
+    require Perl::Critic;
 
     my $critic = Perl::Critic->new();
     my @violations = $critic->critique( \$src );
