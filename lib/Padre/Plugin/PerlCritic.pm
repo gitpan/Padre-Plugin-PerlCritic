@@ -6,7 +6,7 @@ use warnings;
 use base 'Padre::Plugin';
 use Wx qw(wxOK wxCENTRE);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 NAME
 
@@ -46,9 +46,9 @@ sub critic {
     my @violations = $critic->critique( \$src );
 
     $self->show_output;
-    $self->{output}->clear;
+    $self->{gui}->{output_panel}->clear;
     my $output = @violations ? join '', @violations : 'Perl::Critic found nothing to say about this code';
-    $self->{output}->AppendText($output);
+    $self->{gui}->{output_panel}->AppendText($output);
 
     return;
 }
