@@ -11,7 +11,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Test::More' => '0.47',
                            'Perl::Critic' => 0,
-                           'Padre' => '0.21'
+                           'Padre' => '0.26'
                          }
         )
 ;

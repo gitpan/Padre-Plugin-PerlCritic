@@ -6,7 +6,7 @@ use warnings;
 use base 'Padre::Plugin';
 use Wx qw(wxOK wxCENTRE);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 =head1 NAME
 
@@ -18,39 +18,48 @@ This is a simple plugin to run Perl::Critic on your source code.
 
 Currently there is no configuration for this plugin, so you have to rely
 on the default .perlcriticrc configuration. See Perl::Critic for details.
-    
+
 =cut
 
+sub padre_interfaces {
+	return 'Padre::Plugin' => '0.23';
+}
+
 sub menu_plugins_simple {
-	my $self = shift;
-	return 'Perl::Critic' => [
-		Run => \&critic,
+	return PerlCritic => [
+		Wx::gettext('Run PerlCritic') => \&critic,
 	];
 }
 
 sub critic {
-    my ($self) = @_;
+	my ($self) = @_;
 
-    my $doc = $self->selected_document;
-    my $src = $self->selected_text;
-    $src = $doc->text_get unless $src;
-    return unless defined $src;
+	my $doc = $self->current->document;
+	my $src = $doc->text_get;
+	return unless defined $src;
 
-    if ( !$doc->isa('Padre::Document::Perl') ) {
-        return Wx::MessageBox( 'Document is not a Perl document', "Error", wxOK | wxCENTRE, $self );
-    }
+	if ( !$doc->isa('Padre::Document::Perl') ) {
+		return Wx::MessageBox( 'Document is not a Perl document', "Error", wxOK | wxCENTRE, $self );
+	}
 
-    require Perl::Critic;
+	require Perl::Critic;
 
-    my $critic = Perl::Critic->new();
-    my @violations = $critic->critique( \$src );
+	my $critic     = Perl::Critic->new();
+	my @violations = $critic->critique( \$src );
 
-    $self->show_output;
-    $self->{gui}->{output_panel}->clear;
-    my $output = @violations ? join '', @violations : 'Perl::Critic found nothing to say about this code';
-    $self->{gui}->{output_panel}->AppendText($output);
+#    my $main      = Padre->ide->wx->main_window;
+#    my $errorlist = $main->errorlist;
+#    $errorlist->enable;
+#    $errorlist->clear;
+#    my @out = map { [ $_->location, $doc->filename, $_->explanation ] } @violations;
 
-    return;
+	my $output = @violations ? join '', @violations : 'Perl::Critic found nothing to say about this code';
+	Padre::Current->main->output->clear;
+
+	Padre::Current->main->output->AppendText( "$output\n" );
+	Padre::Current->main->show_output(1);
+
+	return;
 }
 
 =head1 AUTHOR
