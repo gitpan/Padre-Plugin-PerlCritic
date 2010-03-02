@@ -1,12 +1,15 @@
 package Padre::Plugin::PerlCritic;
 
+use 5.008;
 use strict;
 use warnings;
+use Padre::Wx     ();
+use Padre::Plugin ();
 
-use base 'Padre::Plugin';
-use Wx qw(wxOK wxCENTRE);
+our $VERSION = '0.07';
+our @ISA     = 'Padre::Plugin';
 
-our $VERSION = '0.06';
+=pod
 
 =head1 NAME
 
@@ -22,49 +25,84 @@ on the default .perlcriticrc configuration. See Perl::Critic for details.
 =cut
 
 sub padre_interfaces {
-	return 'Padre::Plugin' => '0.23';
+	'Padre::Plugin' => '0.26',
+	'Padre::Config' => '0.54',
+}
+
+sub plugin_name {
+	Wx::gettext('Perl Critic');
 }
 
 sub menu_plugins_simple {
-	return PerlCritic => [
-		Wx::gettext('Run PerlCritic') => \&critic,
+	my $self = shift;
+	return $self->plugin_name => [
+		Wx::gettext('Perl::Critic Current Document') => sub {
+			$self->critic(@_);
+		}
 	];
 }
 
 sub critic {
-	my ($self) = @_;
+	my $self    = shift;
+	my $current = $self->current;
+	$DB::single = 1;
 
-	my $doc = $self->current->document;
-	my $src = $doc->text_get;
-	return unless defined $src;
+	# Get the document to critique
+	my $document = $current->document or return;
+	unless ( $document->isa('Padre::Document::Perl') ) {
+		return Wx::MessageBox(
+			Wx::gettext('Document is not a Perl document'),
+			Wx::gettext('Error'),
+			Wx::wxOK | Wx::wxCENTRE,
+			$self,
+		);
+	}
+	my $text = $document->text_get;
+	return unless defined $text;
 
-	if ( !$doc->isa('Padre::Document::Perl') ) {
-		return Wx::MessageBox( 'Document is not a Perl document', "Error", wxOK | wxCENTRE, $self );
+	# Do we have a project-specific configuration
+	my $project           = $document->project;
+	my $config            = $project->config;
+	my $config_perlcritic = $config->config_perlcritic;
+	my @params            = $config_perlcritic
+		? ( -profile => $config_perlcritic )
+		: ();
+
+	# Open and start output from the critic run
+	my $main   = $current->main;
+	my $output = $main->output;
+	$output->clear;
+	$main->show_output(1);
+	if ( @params ) {
+		$output->AppendText("Perl\::Critic running with project-specific configuration $config_perlcritic\n");
+	} else {
+		$output->AppendText("Perl\::Critic running with default or user configuration\n");
 	}
 
+	# Hand off to Perl::Critic
 	require Perl::Critic;
+	my $critic     = Perl::Critic->new( @params );
+	my @violations = $critic->critique( \$text );
 
-	my $critic     = Perl::Critic->new();
-	my @violations = $critic->critique( \$src );
-
-#    my $main      = Padre->ide->wx->main_window;
-#    my $errorlist = $main->errorlist;
-#    $errorlist->enable;
-#    $errorlist->clear;
-#    my @out = map { [ $_->location, $doc->filename, $_->explanation ] } @violations;
-
-	my $output = @violations ? join '', @violations : 'Perl::Critic found nothing to say about this code';
-	Padre::Current->main->output->clear;
-
-	Padre::Current->main->output->AppendText( "$output\n" );
-	Padre::Current->main->show_output(1);
+	# Write the results to the Output window
+	if ( @violations ) {
+		$output->AppendText(join '', @violations);
+	} else {
+		$output->AppendText(
+			Wx::gettext("Perl\::Critic found nothing to say about this code\n")
+		);
+	}
 
 	return;
 }
 
-=head1 AUTHOR
+1;
 
-Kaare Rasmussen
+__END__
+
+=pod
+
+=head1 AUTHOR
 
 Kaare Rasmussen E<lt>kaare@cpan.orgE<gt>
 
@@ -76,5 +114,3 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
 
 =cut
-
-1;
