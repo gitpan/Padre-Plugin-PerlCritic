@@ -1,4 +1,9 @@
 package Padre::Plugin::PerlCritic;
+BEGIN {
+  $Padre::Plugin::PerlCritic::VERSION = '0.09';
+}
+
+# ABSTRACT: Analyze perl files with Perl::Critic
 
 use 5.008;
 use strict;
@@ -6,27 +11,10 @@ use warnings;
 use Padre::Wx     ();
 use Padre::Plugin ();
 
-our $VERSION = '0.08';
-our @ISA     = 'Padre::Plugin';
-
-=pod
-
-=head1 NAME
-
-Padre::Plugin::PerlCritic - Analyze perl files with Perl::Critic
-
-=head1 SYNOPIS
-
-This is a simple plugin to run Perl::Critic on your source code.
-
-Currently there is no configuration for this plugin, so you have to rely
-on the default .perlcriticrc configuration. See Perl::Critic for details.
-
-=cut
+our @ISA = 'Padre::Plugin';
 
 sub padre_interfaces {
-	'Padre::Plugin' => '0.43',
-	'Padre::Config' => '0.54',
+	'Padre::Plugin' => '0.47',;
 }
 
 sub plugin_name {
@@ -38,7 +26,7 @@ sub menu_plugins_simple {
 	return $self->plugin_name => [
 		Wx::gettext('Perl::Critic Current Document') => sub {
 			$self->critic(@_);
-		}
+			}
 	];
 }
 
@@ -64,7 +52,8 @@ sub critic {
 	my $project           = $document->project;
 	my $config            = $project->config;
 	my $config_perlcritic = $config->config_perlcritic;
-	my @params            = $config_perlcritic
+	my @params =
+		$config_perlcritic
 		? ( -profile => $config_perlcritic )
 		: ();
 
@@ -73,24 +62,24 @@ sub critic {
 	my $output = $main->output;
 	$output->clear;
 	$main->show_output(1);
-	if ( @params ) {
-		$output->AppendText("Perl\::Critic running with project-specific configuration $config_perlcritic\n");
+	if (@params) {
+		$output->AppendText(
+			sprintf( Wx::gettext('Perl::Critic running with project-specific configuration %s'), $config_perlcritic )
+				. "\n" );
 	} else {
-		$output->AppendText("Perl\::Critic running with default or user configuration\n");
+		$output->AppendText( Wx::gettext("Perl\::Critic running with default or user configuration") . "\n" );
 	}
 
 	# Hand off to Perl::Critic
 	require Perl::Critic;
-	my $critic     = Perl::Critic->new( @params );
+	my $critic     = Perl::Critic->new(@params);
 	my @violations = $critic->critique( \$text );
 
 	# Write the results to the Output window
-	if ( @violations ) {
-		$output->AppendText(join '', @violations);
+	if (@violations) {
+		$output->AppendText( join '', @violations );
 	} else {
-		$output->AppendText(
-			Wx::gettext("Perl\::Critic found nothing to say about this code\n")
-		);
+		$output->AppendText( Wx::gettext('Perl::Critic found nothing to say about this code') . "\n" );
 	}
 
 	return;
@@ -98,19 +87,48 @@ sub critic {
 
 1;
 
-__END__
+
 
 =pod
 
-=head1 AUTHOR
+=head1 NAME
 
-Kaare Rasmussen E<lt>kaare@cpan.orgE<gt>
+Padre::Plugin::PerlCritic - Analyze perl files with Perl::Critic
+
+=head1 VERSION
+
+version 0.09
+
+=head1 SYNOPSIS
+
+This is a simple plugin to run Perl::Critic on your source code.
+
+Currently there is no configuration for this plugin, so you have to rely
+on the default .perlcriticrc configuration. See Perl::Critic for details.
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Kaare Rasmussen <kaare@cpan.org>
+
+=item *
+
+Ahmad M. Zawawi <ahmad.zawawi@gmail.com>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2008 by Kaare Rasmussen
+This software is copyright (c) 2010 by Kaare Rasmussen.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
+
+
+__END__
+
