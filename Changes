@@ -1,5 +1,9 @@
 Revision history for Perl extension Padre-Plugin-PerlCritic.
 
+0.10   2010.10.27
+    - Fixed t/01-menu.t to work under no DISPLAY (AZAWAWI)
+    - t/00-load.t is magically injected by [@PadrePlugin] via [LoadTests] (AZAWAWI)
+
 0.09   2010.10.25
     - Switched to Dist::Zilla (AZAWAWI)
     - Fixed t/* to work under no DISPLAY (AZAWAWI)

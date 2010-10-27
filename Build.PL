@@ -20,7 +20,7 @@ my %module_build_args = (
     'Ahmad M. Zawawi <ahmad.zawawi@gmail.com>'
   ],
   'dist_name' => 'Padre-Plugin-PerlCritic',
-  'dist_version' => '0.09',
+  'dist_version' => '0.10',
   'license' => 'perl',
   'module_name' => 'Padre::Plugin::PerlCritic',
   'recommends' => {},

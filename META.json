@@ -45,7 +45,7 @@
          "url" : "http://svn.perlide.org/padre/trunk/Padre-Plugin-PerlCritic/"
       }
    },
-   "version" : "0.09",
+   "version" : "0.10",
    "x_Dist_Zilla" : {
       "plugins" : [
          {
@@ -127,6 +127,11 @@
             "class" : "Dist::Zilla::Plugin::CompileTests",
             "name" : "Dist::Zilla::PluginBundle::PadrePlugin/Dist::Zilla::Plugin::CompileTests",
             "version" : "1.101800"
+         },
+         {
+            "class" : "Dist::Zilla::Plugin::LoadTests",
+            "name" : "Dist::Zilla::PluginBundle::PadrePlugin/Dist::Zilla::Plugin::LoadTests",
+            "version" : "0.03"
          },
          {
             "class" : "Dist::Zilla::Plugin::EOLTests",
