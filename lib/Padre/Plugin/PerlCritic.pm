@@ -1,6 +1,6 @@
 package Padre::Plugin::PerlCritic;
 BEGIN {
-  $Padre::Plugin::PerlCritic::VERSION = '0.10';
+  $Padre::Plugin::PerlCritic::VERSION = '0.11';
 }
 
 # ABSTRACT: Analyze perl files with Perl::Critic
@@ -97,7 +97,7 @@ Padre::Plugin::PerlCritic - Analyze perl files with Perl::Critic
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 
